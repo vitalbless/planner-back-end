@@ -43,7 +43,7 @@ export class UserService {
 				{ label: 'Total', value: totalTasks },
 				{ label: 'Completed tasks', value: completedTasks },
 				{ label: 'Today tasks', value: todayTasks },
-				{ label: 'Week tasks', value: weekStart }
+				{ label: 'Week tasks', value: weekTasks }
 			]
 		}
 	}
@@ -61,6 +61,13 @@ export class UserService {
 		if (dto.password) {
 			data = { ...dto, password: await hash(dto.password) }
 		}
-		return this.prisma.user.update({ where: { id }, data })
+		return this.prisma.user.update({
+			where: { id },
+			data,
+			select: {
+				name: true,
+				email: true
+			}
+		})
 	}
 }

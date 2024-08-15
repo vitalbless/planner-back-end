@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from 'src/prisma.service'
+import { TaskDto } from './dto/task.dto'
+
+@Injectable()
+export class TaskService {
+	constructor(private prisma: PrismaService) {}
+	async getAll(userId: string) {
+		return this.prisma.task.findMany({
+			where: { userId }
+		})
+	}
+
+	async create(dto: TaskDto, userId: string) {
+		return this.prisma.task.create({
+			data: {
+				...dto,
+				user: {
+					connect: { id: userId }
+				}
+			}
+		})
+	}
+	//Partial переводит все в типе TaskDto в опциональные поля
+	async update(taskId: string, dto: Partial<TaskDto>, userId: string) {
+		return this.prisma.task.update({
+			where: {
+				id: taskId,
+				userId
+			},
+			data: dto
+		})
+	}
+	async delete(taskId: string) {
+		return this.prisma.task.delete({
+			where: { id: taskId }
+		})
+	}
+}
