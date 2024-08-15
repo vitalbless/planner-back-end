@@ -42,4 +42,12 @@ export class TimeBlockService {
 			where: { id: timeBlockId, userId }
 		})
 	}
+	//транзакции нужны чтобы мы порядок order меняли на сервере тоже, при перестаскивании на клиенте, на сервере тоже будет меняться.
+	async updateOrder(ids: string[]) {
+		return this.prisma.$transaction(
+			ids.map((id, order) =>
+				this.prisma.timeBlock.update({ where: { id }, data: { order } })
+			)
+		)
+	}
 }
